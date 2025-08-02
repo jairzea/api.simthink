@@ -16,7 +16,6 @@ class InvestigationFolderItemResource extends JsonResource
             'id' => $this->id,
             'folder_id' => $this->folder_id,
             'investigation_id' => $this->investigation_id,
-            'investigation_folder_investigation_id' => $this->investigation_folder_investigation_id,
         ];
     }
 }

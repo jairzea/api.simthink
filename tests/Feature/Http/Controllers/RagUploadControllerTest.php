@@ -55,7 +55,6 @@ final class RagUploadControllerTest extends TestCase
             'file_type' => $file_type,
             'path' => $path,
             'status' => $status,
-            'user_investigation_id' => $user_investigation->id,
         ]);
 
         $ragUploads = RagUpload::query()
@@ -65,7 +64,6 @@ final class RagUploadControllerTest extends TestCase
             ->where('file_type', $file_type)
             ->where('path', $path)
             ->where('status', $status)
-            ->where('user_investigation_id', $user_investigation->id)
             ->get();
         $this->assertCount(1, $ragUploads);
         $ragUpload = $ragUploads->first();
@@ -113,7 +111,6 @@ final class RagUploadControllerTest extends TestCase
             'file_type' => $file_type,
             'path' => $path,
             'status' => $status,
-            'user_investigation_id' => $user_investigation->id,
         ]);
 
         $ragUpload->refresh();
@@ -127,7 +124,6 @@ final class RagUploadControllerTest extends TestCase
         $this->assertEquals($file_type, $ragUpload->file_type);
         $this->assertEquals($path, $ragUpload->path);
         $this->assertEquals($status, $ragUpload->status);
-        $this->assertEquals($user_investigation->id, $ragUpload->user_investigation_id);
     }
 
 

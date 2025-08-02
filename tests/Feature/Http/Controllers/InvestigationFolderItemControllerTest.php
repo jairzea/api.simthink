@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\Folder;
+use App\Models\InvestigationFolder;
 use App\Models\Investigation;
 use App\Models\InvestigationFolderInvestigation;
 use App\Models\InvestigationFolderItem;
@@ -44,7 +44,7 @@ final class InvestigationFolderItemControllerTest extends TestCase
     #[Test]
     public function store_saves(): void
     {
-        $folder = Folder::factory()->create();
+        $folder = InvestigationFolder::factory()->create();
         $investigation = Investigation::factory()->create();
 
         $response = $this->post(route('investigation-folder-items.store'), [
@@ -87,14 +87,13 @@ final class InvestigationFolderItemControllerTest extends TestCase
     public function update_behaves_as_expected(): void
     {
         $investigationFolderItem = InvestigationFolderItem::factory()->create();
-        $folder = Folder::factory()->create();
+        $folder = InvestigationFolder::factory()->create();
         $investigation = Investigation::factory()->create();
         $investigation_folder_investigation = InvestigationFolderInvestigation::factory()->create();
 
         $response = $this->put(route('investigation-folder-items.update', $investigationFolderItem), [
             'folder_id' => $folder->id,
             'investigation_id' => $investigation->id,
-            'investigation_folder_investigation_id' => $investigation_folder_investigation->id,
         ]);
 
         $investigationFolderItem->refresh();
@@ -104,7 +103,6 @@ final class InvestigationFolderItemControllerTest extends TestCase
 
         $this->assertEquals($folder->id, $investigationFolderItem->folder_id);
         $this->assertEquals($investigation->id, $investigationFolderItem->investigation_id);
-        $this->assertEquals($investigation_folder_investigation->id, $investigationFolderItem->investigation_folder_investigation_id);
     }
 
 

@@ -23,7 +23,7 @@ class SyntheticUserFactory extends Factory
     {
         return [
             'investigation_id' => Investigation::factory(),
-            'code' => fake()->word(),
+            'code' => fake()->unique()->lexify('user_????'),
             'ocean_profile' => '{}',
             'metadata' => '{}',
         ];

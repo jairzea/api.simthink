@@ -24,7 +24,6 @@ class RagUpload extends Model
         'file_type',
         'path',
         'status',
-        'user_investigation_id',
     ];
 
     /**
@@ -35,14 +34,10 @@ class RagUpload extends Model
     protected function casts(): array
     {
         return [
-            'user_investigation_id' => 'integer',
         ];
     }
 
-    public function userInvestigation(): BelongsTo
-    {
-        return $this->belongsTo(UserInvestigation::class);
-    }
+
 
     public function user(): BelongsTo
     {

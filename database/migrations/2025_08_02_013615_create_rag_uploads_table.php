@@ -22,7 +22,6 @@ return new class extends Migration
             $table->enum('file_type', ["pdf","doc","docx","txt","xlsx","image"]);
             $table->string('path');
             $table->enum('status', ["uploaded","processed","deleted"]);
-            $table->foreignId('user_investigation_id');
             $table->timestamps();
         });
 

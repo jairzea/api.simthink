@@ -15,9 +15,8 @@ return new class extends Migration
 
         Schema::create('investigation_folder_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('folder_id')->constrained();
+            $table->foreignUuid('folder_id')->constrained('investigation_folders');
             $table->foreignUuid('investigation_id')->constrained();
-            $table->foreignId('investigation_folder_investigation_id');
             $table->timestamps();
         });
 

@@ -22,7 +22,6 @@ class InvestigationFolderItemUpdateRequest extends FormRequest
         return [
             'folder_id' => ['required'],
             'investigation_id' => ['required'],
-            'investigation_folder_investigation_id' => ['required', 'integer', 'exists:investigation_folder_investigations,id'],
         ];
     }
 }

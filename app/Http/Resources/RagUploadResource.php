@@ -21,7 +21,6 @@ class RagUploadResource extends JsonResource
             'file_type' => $this->file_type,
             'path' => $this->path,
             'status' => $this->status,
-            'user_investigation_id' => $this->user_investigation_id,
         ];
     }
 }

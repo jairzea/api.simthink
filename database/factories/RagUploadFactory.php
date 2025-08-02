@@ -31,7 +31,6 @@ class RagUploadFactory extends Factory
             'file_type' => fake()->randomElement(["pdf","doc","docx","txt","xlsx","image"]),
             'path' => fake()->word(),
             'status' => fake()->randomElement(["uploaded","processed","deleted"]),
-            'user_investigation_id' => UserInvestigation::factory(),
         ];
     }
 }

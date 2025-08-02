@@ -4,13 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Model
+class User extends Authenticatable implements OAuthenticatable
 {
-    use HasFactory, HasUuids;
+    use HasApiTokens, HasFactory, HasUuids, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -51,13 +54,9 @@ class User extends Model
         ];
     }
 
-    public function creditTransactionInvestigationInvestigationFolderRagUploads(): HasMany
+    public function investigations(): HasMany
     {
-        return $this->hasMany(CreditTransactionInvestigationInvestigationFolderRagUpload::class);
+        return $this->hasMany(Investigation::class);
     }
 
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class);
-    }
 }

@@ -29,6 +29,7 @@ class InvestigationFolder extends Model
 
     public function investigationFolderItems(): HasMany
     {
-        return $this->hasMany(InvestigationFolderItem::class);
+        return $this->hasMany(InvestigationFolderItem::class, 'folder_id');
     }
+    
 }

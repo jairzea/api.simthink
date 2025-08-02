@@ -27,7 +27,6 @@ class RagUploadUpdateRequest extends FormRequest
             'file_type' => ['required', 'in:pdf,doc,docx,txt,xlsx,image'],
             'path' => ['required', 'string'],
             'status' => ['required', 'in:uploaded,processed,deleted'],
-            'user_investigation_id' => ['required', 'integer', 'exists:user_investigations,id'],
         ];
     }
 }

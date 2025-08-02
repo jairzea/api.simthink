@@ -19,25 +19,7 @@ class InvestigationFolderItem extends Model
     protected $fillable = [
         'folder_id',
         'investigation_id',
-        'investigation_folder_investigation_id',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'investigation_folder_investigation_id' => 'integer',
-        ];
-    }
-
-    public function investigationFolderInvestigation(): BelongsTo
-    {
-        return $this->belongsTo(InvestigationFolderInvestigation::class);
-    }
 
     public function folder(): BelongsTo
     {

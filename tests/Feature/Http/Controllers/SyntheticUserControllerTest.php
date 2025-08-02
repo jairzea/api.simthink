@@ -41,7 +41,7 @@ final class SyntheticUserControllerTest extends TestCase
     {
         $investigation = Investigation::factory()->create();
         $code = fake()->word();
-        $ocean_profile = fake()->;
+        $ocean_profile = fake()->word();
 
         $response = $this->post(route('synthetic-users.store'), [
             'investigation_id' => $investigation->id,
@@ -90,7 +90,7 @@ final class SyntheticUserControllerTest extends TestCase
         $syntheticUser = SyntheticUser::factory()->create();
         $investigation = Investigation::factory()->create();
         $code = fake()->word();
-        $ocean_profile = fake()->;
+        $ocean_profile = fake()->word();
 
         $response = $this->put(route('synthetic-users.update', $syntheticUser), [
             'investigation_id' => $investigation->id,
