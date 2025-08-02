@@ -1,0 +1,259 @@
+models:
+  User:
+    id: uuid primary
+    name: string
+    email: string unique
+    password: string
+    company: string nullable
+    phone: string nullable
+    email_verified_at: timestamp nullable
+    credits: integer default:0
+    storage_used_mb: integer default:0
+    storage_limit_mb: integer default:512
+    remember_token: string nullable
+    relationships:
+      hasMany:
+        - CreditTransaction
+        - Investigation
+        - InvestigationFolder
+        - RagUpload
+      belongsToMany:
+        - Role
+
+  Role:
+    id: uuid primary
+    name: string unique
+    guard_name: string default:web
+    relationships:
+      belongsToMany:
+        - User
+        - Permission
+
+  Permission:
+    id: uuid primary
+    name: string unique
+    guard_name: string default:web
+    relationships:
+      belongsToMany:
+        - Role
+
+  role_user:
+    user_id: uuid foreign
+    role_id: uuid foreign
+
+  permission_role:
+    permission_id: uuid foreign
+    role_id: uuid foreign
+
+  CreditTransaction:
+    id: uuid primary
+    user_id: uuid foreign
+    amount_usd: decimal:10,2
+    credits_added: integer
+    package_type: enum:basic,premium,pro,enterprise
+    payment_method: string
+    invoice_number: string
+    status: enum:pending,completed,failed
+    metadata: json nullable
+    relationships:
+      belongsTo: User
+
+  Investigation:
+    id: uuid primary
+    user_id: uuid foreign
+    name: string
+    status: enum:created,processing,completed,failed
+    sample_size: integer
+    type: enum:insight,imss,other
+    use_rag: boolean
+    cost_credits: integer
+    result_summary: text nullable
+    completed_at: timestamp nullable
+    relationships:
+      belongsTo: User
+      hasMany:
+        - SyntheticUser
+      hasOne: RagUpload
+
+  SyntheticUser:
+    id: uuid primary
+    investigation_id: uuid foreign
+    code: string unique
+    ocean_profile: json
+    metadata: json nullable
+    relationships:
+      belongsTo: Investigation
+      hasMany: SyntheticResponse
+
+  SyntheticResponse:
+    id: uuid primary
+    synthetic_user_id: uuid foreign
+    question: text
+    answer: text
+    relationships:
+      belongsTo: SyntheticUser
+
+  InvestigationFolder:
+    id: uuid primary
+    user_id: uuid foreign
+    name: string
+    relationships:
+      belongsTo: User
+      hasMany: InvestigationFolderItem
+
+  InvestigationFolderItem:
+    id: uuid primary
+    folder_id: uuid foreign
+    investigation_id: uuid foreign
+    relationships:
+      belongsTo:
+        - InvestigationFolder
+        - Investigation
+
+  RagUpload:
+    id: uuid primary
+    user_id: uuid foreign
+    investigation_id: uuid foreign nullable
+    filename: string
+    size_kb: integer
+    file_type: enum:pdf,doc,docx,txt,xlsx,image
+    path: string
+    status: enum:uploaded,processed,deleted
+    relationships:
+      belongsTo:
+        - User
+        - Investigation
+
+controllers:
+  CreditTransaction:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: amount_usd, payment_method, company, nit, user_id
+      save: credit_transaction
+    show:
+      resource: credit_transaction
+    update:
+      validate: amount_usd, payment_method, company, nit
+      update: credit_transaction
+    destroy:
+      delete: credit_transaction
+      respond: 204
+
+  Investigation:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: name, sample_size, type, use_rag, rag_upload_ids, user_id
+      save: investigation
+    show:
+      resource: investigation
+    update:
+      validate: name, sample_size, type, use_rag
+      update: investigation
+    destroy:
+      delete: investigation
+      respond: 204
+
+  SyntheticUser:
+    resource: api
+    index:
+      query: all
+    show:
+      resource: synthetic_user
+
+  SyntheticResponse:
+    resource: api
+    index:
+      query: all
+
+  InvestigationFolder:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: name, user_id
+      save: investigation_folder
+    destroy:
+      delete: investigation_folder
+      respond: 204
+
+  InvestigationFolderItem:
+    resource: api
+    store:
+      validate: folder_id, investigation_id
+      save: investigation_folder_item
+    destroy:
+      delete: investigation_folder_item
+      respond: 204
+
+  RagUpload:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: file, file_type, user_id
+      save: rag_upload
+    destroy:
+      delete: rag_upload
+      respond: 204
+
+  User:
+    resource: api
+    index:
+      query: all
+    show:
+      resource: user
+    update:
+      validate: name, email, company, phone, storage_limit_mb
+      update: user
+    destroy:
+      delete: user
+      respond: 204
+
+  Role:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: name, guard_name
+      save: role
+    update:
+      validate: name, guard_name
+      update: role
+    destroy:
+      delete: role
+      respond: 204
+
+  Permission:
+    resource: api
+    index:
+      query: all
+    store:
+      validate: name, guard_name
+      save: permission
+    update:
+      validate: name, guard_name
+      update: permission
+    destroy:
+      delete: permission
+      respond: 204
+
+routes:
+  api:
+    resources:
+      - UserController
+      - CreditTransactionController
+      - InvestigationController
+      - SyntheticUserController
+      - SyntheticResponseController
+      - InvestigationFolderController
+      - InvestigationFolderItemController
+      - RagUploadController
+      - RoleController
+      - PermissionController
+
+middleware:
+  api: auth:api
