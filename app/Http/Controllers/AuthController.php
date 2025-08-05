@@ -4,57 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request)
-    {
-        $data = $request->validated();
 
-        $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+    public function __construct(private AuthService $service) {}
 
-        $token = $user->createToken('api-token')->accessToken;
-
-        return response()->json([
-            'token' => $token,
-            'user'  => $user,
-        ], 201);
-    }
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
-
-        if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Invalid credentials'
-            ], 401);
-        }
-
-        $user = Auth::user();
-        $token = $user->createToken('api-token')->accessToken;
+        $result = $this->service->login($request->validated());
 
         return response()->json([
-            'token' => $token,
-            'user'  => $user,
+            'user'         => new UserResource($result['user']),
+            'access_token' => $result['token'],
+            'token_type'   => 'Bearer',
         ]);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
-
-        return response()->json([
-            'message' => 'Logged out successfully',
-        ]);
+        $this->service->logout($request->user());
+        return response()->json([], 204);
     }
 
     public function me(Request $request)

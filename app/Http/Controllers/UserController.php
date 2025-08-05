@@ -6,37 +6,44 @@ use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
-    public function index(Request $request): Response
+    public function __construct(private UserService $service)
     {
-        $users = User::all();
     }
 
-    public function store(UserStoreRequest $request): UserResource
+    public function register(UserStoreRequest $request)
     {
-        $user = User::create($request->validated());
+        $user  = $this->service->register($request->validated());
+        $token = $user->createToken('api-token')->plainTextToken;
 
+        return response()->json([
+            'user'  => new UserResource($user),
+            'token' => $token,
+        ], 201);
+    }
+
+    public function index()
+    {
+        return UserResource::collection($this->service->listUsers());
+    }
+
+    public function show(User $user)
+    {
         return new UserResource($user);
     }
 
-    public function show(Request $request, User $user): UserResource
+    public function update(UserUpdateRequest $request, User $user)
     {
+        $user = $this->service->updateUser($user, $request->validated());
         return new UserResource($user);
     }
 
-    public function update(UserUpdateRequest $request, User $user): Response
+    public function destroy(User $user)
     {
-        $user->update($request->validated());
-    }
-
-    public function destroy(Request $request, User $user): Response
-    {
-        $user->delete();
-
-        return response()->noContent();
+        $this->service->deleteUser($user);
+        return response()->json(null, 204);
     }
 }

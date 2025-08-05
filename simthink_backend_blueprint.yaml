@@ -69,6 +69,10 @@ models:
     cost_credits: integer
     result_summary: text nullable
     completed_at: timestamp nullable
+    context_info: text
+    target_persona: text
+    research_goal: text
+    product_info: text
     relationships:
       belongsTo: User
       hasMany:

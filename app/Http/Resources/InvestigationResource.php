@@ -23,8 +23,14 @@ class InvestigationResource extends JsonResource
             'cost_credits' => $this->cost_credits,
             'result_summary' => $this->result_summary,
             'completed_at' => $this->completed_at,
+
+            'context_info'   => $this->context_info,
+            'target_persona' => $this->target_persona,
+            'research_goal'  => $this->research_goal,
+            'product_info'   => $this->product_info,
+            
             'user' => UserResource::make($this->whenLoaded('user')),
-            'syntheticUsers' => SyntheticUserCollection::make($this->whenLoaded('syntheticUsers')),
+            'syntheticUsers' => SyntheticUserResource::make($this->whenLoaded('syntheticUsers')),
             'ragUpload' => RagUploadResource::make($this->whenLoaded('ragUpload')),
         ];
     }

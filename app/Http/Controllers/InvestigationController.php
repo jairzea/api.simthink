@@ -6,35 +6,41 @@ use App\Http\Requests\InvestigationStoreRequest;
 use App\Http\Requests\InvestigationUpdateRequest;
 use App\Http\Resources\InvestigationResource;
 use App\Models\Investigation;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Services\InvestigationService;
 
 class InvestigationController extends Controller
 {
-    public function index(Request $request): Response
+    public function __construct(
+        protected InvestigationService $service,
+    ) {}
+
+    public function index()
     {
-        $investigations = Investigation::all();
+        $investigations = $this->service->findByUser(request()->input('limit', 10));
+    return InvestigationResource::collection($investigations);
     }
 
-    public function store(InvestigationStoreRequest $request): Response
+    public function store(InvestigationStoreRequest $request)
     {
-        $investigation = Investigation::create($request->validated());
-    }
-
-    public function show(Request $request, Investigation $investigation): InvestigationResource
-    {
+        $investigation = $this->service->store($request->validated());
         return new InvestigationResource($investigation);
     }
 
-    public function update(InvestigationUpdateRequest $request, Investigation $investigation): Response
+    public function show(Investigation $investigation)
     {
-        $investigation->update($request->validated());
+        $investigation->load(['user', 'syntheticUsers', 'ragUpload']);
+        return new InvestigationResource($investigation);
     }
 
-    public function destroy(Request $request, Investigation $investigation): Response
+    public function update(InvestigationUpdateRequest $request, Investigation $investigation)
     {
-        $investigation->delete();
+        $investigation = $this->service->update($investigation, $request->validated());
+        return new InvestigationResource($investigation);
+    }
 
+    public function destroy(Investigation $investigation)
+    {
+        $this->service->delete($investigation);
         return response()->noContent();
     }
 }

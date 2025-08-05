@@ -19,7 +19,7 @@ class SyntheticUserResource extends JsonResource
             'ocean_profile' => $this->ocean_profile,
             'metadata' => $this->metadata,
             'investigation' => InvestigationResource::make($this->whenLoaded('investigation')),
-            'syntheticResponses' => SyntheticResponseCollection::make($this->whenLoaded('syntheticResponses')),
+            'syntheticResponses' => SyntheticResponseResource::make($this->whenLoaded('syntheticResponses')),
         ];
     }
 }

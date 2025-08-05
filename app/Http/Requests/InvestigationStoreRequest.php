@@ -20,20 +20,19 @@ class InvestigationStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'sample_size' => ['required', 'integer'],
-            'type' => ['required', 'in:insight,imss,other'],
-            'use_rag' => ['required'],
-            'user_id' => ['required'],
-            'name' => ['required', 'string'],
-            'status' => ['required', 'in:created,processing,completed,failed'],
-            'sample_size' => ['required', 'integer'],
-            'type' => ['required', 'in:insight,imss,other'],
-            'use_rag' => ['required'],
-            'cost_credits' => ['required', 'integer'],
-            'result_summary' => ['nullable', 'string'],
-            'completed_at' => ['nullable'],
-            'user_id' => ['required'],
+            'name'            => ['required', 'string'],
+            'type'            => ['required', 'in:insight,imss,other'],
+            'use_rag'         => ['required', 'boolean'],
+            'status'          => ['required', 'in:created,processing,completed,failed'],
+            'sample_size'     => ['required', 'integer', 'min:1'],
+            'cost_credits'    => ['required', 'integer', 'min:0'],
+            'result_summary'  => ['nullable', 'string'],
+            'completed_at'    => ['nullable', 'date'],
+            'context_info'    => ['required', 'string'],
+            'target_persona'  => ['required', 'string'],
+            'research_goal'   => ['required', 'string'],
+            'product_info'    => ['required', 'string'],
+
         ];
     }
 }

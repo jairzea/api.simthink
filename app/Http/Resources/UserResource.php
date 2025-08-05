@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'credits' => $this->credits,
             'storage_used_mb' => $this->storage_used_mb,
             'storage_limit_mb' => $this->storage_limit_mb,
-            'roles' => RoleCollection::make($this->whenLoaded('roles')),
+            'roles' => RoleResource::make($this->whenLoaded('roles')),
         ];
     }
 }

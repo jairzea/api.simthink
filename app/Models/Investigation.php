@@ -28,6 +28,10 @@ class Investigation extends Model
         'cost_credits',
         'result_summary',
         'completed_at',
+        'context_info',
+        'target_persona',
+        'research_goal',
+        'product_info',
     ];
 
     /**

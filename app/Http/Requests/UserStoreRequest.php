@@ -22,13 +22,13 @@ class UserStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'password'],
+            'password' => 'required|string|min:8',
             'company' => ['nullable', 'string'],
             'phone' => ['nullable', 'string'],
             'email_verified_at' => ['nullable'],
-            'credits' => ['required', 'integer'],
-            'storage_used_mb' => ['required', 'integer'],
-            'storage_limit_mb' => ['required', 'integer'],
+            'credits' => ['nullable', 'integer'],
+            'storage_used_mb' => ['nullable', 'integer'],
+            'storage_limit_mb' => ['nullable', 'integer'],
             'remember_token' => ['nullable', 'string'],
         ];
     }

@@ -2,11 +2,34 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\InvestigationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
+Route::prefix('v1')->group(function () {
+
+    // registro e inicio de sesión
+     Route::prefix('auth')->group(function () {
+        Route::post('/register', [UserController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+     });
+    
+    // rutas protegidas
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('auth/logout', [AuthController::class, 'logout']);
+        Route::apiResource('users', UserController::class)
+            ->only(['index', 'show', 'update', 'destroy']);
+
+        Route::prefix('investigations')->group(function () {
+            Route::post('/', [InvestigationController::class, 'store']);
+            Route::get('/', [InvestigationController::class, 'index']);
+        });
+    });
+});
 
 Route::apiResource('credit-transactions', App\Http\Controllers\CreditTransactionController::class);
 
