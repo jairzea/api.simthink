@@ -19,6 +19,11 @@ class InvestigationService
         return $this->repository->all();
     }
 
+    public function findById($id)
+{
+    return $this->repository->find($id);
+}
+
     public function findByUser(int $perPage)
     {
         return $this->repository->findByUser( $perPage);
