@@ -30,6 +30,8 @@ class User extends Authenticatable implements OAuthenticatable
         'credits',
         'storage_used_mb',
         'storage_limit_mb',
+        'email_notifications',
+        'product_updates'
     ];
 
     /**

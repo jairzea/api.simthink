@@ -21,10 +21,9 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:users,email'],
             'company' => ['nullable', 'string'],
             'phone' => ['nullable', 'string'],
-            'storage_limit_mb' => ['required', 'integer'],
+            'storage_limit_mb' => ['nullable', 'integer'],
         ];
     }
 }

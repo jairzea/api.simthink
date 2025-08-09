@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->integer('credits')->default(0);
+            $table->boolean('email_notifications')->default(true);
+            $table->boolean('product_updates')->default(false);
             $table->integer('storage_used_mb')->default(0);
             $table->integer('storage_limit_mb')->default(512);
             $table->string('remember_token')->nullable();

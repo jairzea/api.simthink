@@ -9,12 +9,9 @@ use App\Models\User;
 
 class UserService
 {
-    private $users;
-
-    public function __construct(UserRepository $users)
-    {
-        $this->users = $users;
-    }
+    public function __construct(
+        private readonly UserRepository $users
+    ) {}
 
     public function listUsers()
     {
@@ -31,9 +28,20 @@ class UserService
         return $this->users->create($data);
     }
 
-    public function updateUser(User $user, array $data): User
+    public function updateProfile(array $data): User
     {
+        $user = Auth::user();
         return $this->users->update($user, $data);
+    }
+
+    public function updatePassword(array $data): void
+    {
+        
+        $this->users->changePassword(
+            Auth::user(),
+            $data['current_password'],
+            $data['password']
+        );
     }
 
     public function deleteUser(User $user): void
@@ -45,5 +53,20 @@ class UserService
     {
         return $this->users->create($data);
     }
+
+    public function updateNotifications(array $data): void
+    {
+        $this->users->updateNotifications(
+            Auth::user(),
+            (bool) $data['email_notifications'],
+            (bool) $data['product_updates']
+        );
+    }
+
+    public function exportUserData(): void
+    {
+        $this->users->queueExport(Auth::user());
+    }
+
 
 }

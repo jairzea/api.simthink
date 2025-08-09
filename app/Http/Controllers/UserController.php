@@ -7,12 +7,16 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\UpdatePasswordRequest;
+use App\Http\Requests\UpdateNotificationsRequest;
+
 
 class UserController extends Controller
 {
-    public function __construct(private UserService $service)
-    {
-    }
+    public function __construct(
+        private UserService $service
+    ){}
 
     public function register(UserStoreRequest $request)
     {
@@ -35,11 +39,26 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function update(UserUpdateRequest $request, User $user)
+    public function updateProfile(UserUpdateRequest $request)
     {
-        $user = $this->service->updateUser($user, $request->validated());
+        // sleep(15);
+
+        $user = $this->service->updateProfile($request->validated());
         return new UserResource($user);
     }
+
+     public function updatePassword(UpdatePasswordRequest $request): JsonResponse
+    {
+        $this->service->updatePassword($request->validated());
+        return response()->json(['message' => 'Contraseña actualizada.']);
+    }
+
+    public function updateNotifications(UpdateNotificationsRequest $request): JsonResponse
+    {
+        $this->service->updateNotifications($request->validated());
+        return response()->json(['message' => 'Preferencias actualizadas.']);
+    }
+
 
     public function destroy(User $user)
     {
