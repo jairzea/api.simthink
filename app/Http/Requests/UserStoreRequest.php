@@ -30,6 +30,9 @@ class UserStoreRequest extends FormRequest
             'storage_used_mb' => ['nullable', 'integer'],
             'storage_limit_mb' => ['nullable', 'integer'],
             'remember_token' => ['nullable', 'string'],
+            'email_notifications' => ['nullable', 'boolean'],
+            'product_updates' => ['nullable', 'boolean'],
+
         ];
     }
 }

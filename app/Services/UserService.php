@@ -49,7 +49,7 @@ class UserService
         $this->users->delete($user);
     }
 
-    public function register(array $data): User
+    public function signIn(array $data): User
     {
         return $this->users->create($data);
     }

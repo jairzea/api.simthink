@@ -18,14 +18,15 @@ class UserController extends Controller
         private UserService $service
     ){}
 
-    public function register(UserStoreRequest $request)
+    public function signIn(UserStoreRequest $request)
     {
-        $user  = $this->service->register($request->validated());
-        $token = $user->createToken('api-token')->plainTextToken;
+        $user  = $this->service->signIn($request->validated());
+        $token = $user->createToken('api-token')->accessToken;
 
         return response()->json([
             'user'  => new UserResource($user),
-            'token' => $token,
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
         ], 201);
     }
 

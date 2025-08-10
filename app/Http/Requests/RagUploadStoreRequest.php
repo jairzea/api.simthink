@@ -27,8 +27,8 @@ class RagUploadStoreRequest extends FormRequest
             'file_type' => ['required', 'in:pdf,doc,docx,txt,xlsx,image'],
             'path' => ['required', 'string'],
             'status' => ['required', 'in:uploaded,processed,deleted'],
-            'file_type' => ['required', 'in:pdf,doc,docx,txt,xlsx,image'],
-            'user_id' => ['required'],
+            'files' => ['required','array','min:1'],
+            'files.*' => ['file','max:10240', 'mimes:pdf,doc,docx,txt,jpg,jpeg,png'],
         ];
     }
 }

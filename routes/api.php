@@ -14,7 +14,7 @@ Route::prefix('v1')->group(function () {
 
     // registro e inicio de sesión
      Route::prefix('auth')->group(function () {
-        Route::post('/register', [UserController::class, 'register']);
+        Route::post('/signIn', [UserController::class, 'signIn']);
         Route::post('/login', [AuthController::class, 'login']);
      });
     
