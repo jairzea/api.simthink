@@ -18,9 +18,12 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained();
             $table->foreignUuid('investigation_id')->nullable()->constrained();
             $table->string('filename');
+            $table->string('disk');
+             $table->string('mime_type', 128)->nullable();
             $table->integer('size_kb');
             $table->enum('file_type', ["pdf","doc","docx","txt","xlsx","image"]);
             $table->string('path');
+            $table->json('meta')->nullable();
             $table->enum('status', ["uploaded","processed","deleted"]);
             $table->timestamps();
         });

@@ -20,13 +20,13 @@ class RagUploadStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required'],
+            'user_id' => ['string'],
             'investigation_id' => ['nullable'],
-            'filename' => ['required', 'string'],
-            'size_kb' => ['required', 'integer'],
-            'file_type' => ['required', 'in:pdf,doc,docx,txt,xlsx,image'],
-            'path' => ['required', 'string'],
-            'status' => ['required', 'in:uploaded,processed,deleted'],
+            'filename' => ['string'],
+            'size_kb' => ['integer'],
+            'file_type' => ['in:pdf,doc,docx,txt,xlsx,image'],
+            'path' => ['string'],
+            'status' => ['in:uploaded,processed,deleted'],
             'files' => ['required','array','min:1'],
             'files.*' => ['file','max:10240', 'mimes:pdf,doc,docx,txt,jpg,jpeg,png'],
         ];

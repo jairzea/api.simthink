@@ -19,7 +19,7 @@ class InvestigationController extends Controller
     public function index()
     {
         $investigations = $this->service->findByUser(request()->input('limit', 10));
-    return InvestigationResource::collection($investigations);
+        return InvestigationResource::collection($investigations);
     }
 
     public function store(InvestigationStoreRequest $request)
