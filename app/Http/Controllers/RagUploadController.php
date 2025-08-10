@@ -2,41 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\RagUploadStoreRequest;
-use App\Http\Requests\RagUploadUpdateRequest;
 use App\Http\Resources\RagUploadResource;
 use App\Models\RagUpload;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Services\RagUploadService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class RagUploadController extends Controller
-{
-    public function index(Request $request): Response
-    {
-        $ragUploads = RagUpload::all();
-    }
+class RagUploadController extends Controller {
+    public function __construct(private readonly RagUploadService $service) {}
 
-    public function store(RagUploadStoreRequest $request): Response
-    {
-        $ragUpload = RagUpload::create($request->validated());
-    }
+    public function store(RagUploadStoreRequest $request): JsonResponse {
+        $userId = $request->user()->id ?? Auth::user()->id;
+        $uploads = $this->service->uploadFiles($userId, $request->file('files'), $request->string('investigation_id'));
 
-    public function show(Request $request, RagUpload $ragUpload): RagUploadResource
-    {
-        return new RagUploadResource($ragUpload);
-    }
+        return response()->json([
+            'message' => 'Archivos cargados correctamente',
+            'data' => RagUploadResource::collection(collect($uploads))
+        ]); 
+    } 
 
-    public function update(RagUploadUpdateRequest $request, RagUpload $ragUpload): RagUploadResource
-    {
-        $ragUpload->update($request->validated());
-
-        return new RagUploadResource($ragUpload);
-    }
-
-    public function destroy(Request $request, RagUpload $ragUpload): Response
-    {
-        $ragUpload->delete();
-
-        return response()->noContent();
+    public function destroy(RagUpload $upload): JsonResponse {
+        $this->authorize('delete', $upload); // política opcional
+        $this->service->delete($upload);
+        return response()->json(['message' => 'Archivo eliminado.']);
     }
 }

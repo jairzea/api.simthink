@@ -24,6 +24,9 @@ class RagUpload extends Model
         'file_type',
         'path',
         'status',
+        'disk',
+        'mime_type',
+        'meta',
     ];
 
     /**
@@ -34,6 +37,7 @@ class RagUpload extends Model
     protected function casts(): array
     {
         return [
+            'meta' => 'array',
         ];
     }
 

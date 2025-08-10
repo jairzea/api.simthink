@@ -13,14 +13,16 @@ class RagUploadResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'investigation_id' => $this->investigation_id,
-            'filename' => $this->filename,
-            'size_kb' => $this->size_kb,
-            'file_type' => $this->file_type,
-            'path' => $this->path,
-            'status' => $this->status,
+            'id'                => $this->id,
+            'user_id'           => $this->user_id,
+            'investigation_id'  => $this->investigation_id,
+            'filename'          => $this->filename,
+            'size_kb'           => $this->size_kb,
+            'file_type'         => $this->file_type,
+            'path'              => $this->path,
+            'status'            => $this->status,
+            'disk'              => $this->disk,
+            'mime_type'         => $this->mime_type,
         ];
     }
 }
