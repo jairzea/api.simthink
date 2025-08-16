@@ -7,8 +7,12 @@ use App\Http\Requests\InvestigationConfirmRequest;
 use App\Http\Requests\InvestigationStoreRequest;
 use App\Http\Requests\InvestigationUpdateRequest;
 use App\Http\Resources\InvestigationResource;
+use App\Http\Resources\PrepareStudyResponseResource;
 use App\Models\Investigation;
 use App\Services\InvestigationService;
+use Log;
+
+ini_set('max_execution_time', 2040000);
 
 class InvestigationController extends Controller
 {
@@ -25,8 +29,8 @@ class InvestigationController extends Controller
     public function store(InvestigationStoreRequest $request)
     {
         $investigation = $this->service->store($request->validated());
-        sleep(15);
-        return new InvestigationResource($investigation);
+        // sleep(seconds: 15);
+        return new PrepareStudyResponseResource($investigation);
     }
 
     public function show(Investigation $investigation)
@@ -49,30 +53,48 @@ class InvestigationController extends Controller
 
     public function confirm(InvestigationConfirmRequest $request, string $id)
     {
+
         $investigation = $this->service->findById($id);
 
         // TODO: Descomentar esta validación cuando se integre  con los agentes
-        // if ($investigation->status !== InvestigationStatus::PendingConfirmation) {
-        //     return response()->json(['message' => 'Investigación no está pendiente de confirmación.'], 400);
-        // }
+        if ($investigation->status !== InvestigationStatus::PendingConfirmation->value) {
+            return response()->json(['message' => 'Investigación no está pendiente de confirmación.'], 400);
+        }
 
-        // Guardar el nombre de la investigación y pasar a estado confirmado
-        $investigation->update([
+        $data = [
             'name' => $request->input('name'),
+            'temp_id' => $request->input('temp_id'),
             'status' => InvestigationStatus::Confirmed,
-        ]);
+        ];
+
+        $result = $this->service->confirm($investigation, $data);
 
         // TODO: Lanzar simulación (puede ser un Job o llamada directa)
         // $this->simulationService->dispatch($investigation);
 
+        $data = $result['result'];
+        $agent5 = $data['agent5_market_plan'] ?? '';
+        $agent6 = $data['agent6_instruments'] ?? '';
+        $refinedHypotheses = $data['refined_hypotheses'] ?? [];
+        $hypothesesTexto = collect($refinedHypotheses)
+                ->map(fn($item) => '• ' . $item)
+                ->implode("\n");
+
         // TODO: Actualizar estado de investigación al finalizar 
-        $investigation->update([
+        $investigationResult = $this->service->update($investigation, [
             'status' => InvestigationStatus::Completed,
+            'context_info'    => $data['agent5_market_plan'],
+            'target_persona'  => $data['refined_customer_profile'],
+            'research_goal'   => $hypothesesTexto,
+            'product_info'    => $data['product_analysis_summary'],
+            'result_summary'  => "🧠 Agente 5:\n{$agent5}\n\n🧪 Agente 6:\n{$agent6}",
         ]);
+
+        Log::info('result', $data);
 
         return response()->json([
             'message' => 'Investigación confirmada. Procesando...',
-            'investigation_id' => $investigation->id,
+            'data' => $investigationResult,
         ]);
     }
 }

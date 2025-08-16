@@ -9,4 +9,7 @@ return [
         'max_total_storage_mb' => (int) env('SIMTHINK_MAX_TOTAL_STORAGE_MB', 5120),
         'max_file_mb' => 100, // por archivo
     ],
+    'gateway' => [
+        'url' => env('SIMTHINK_GATEWAY_URL', 'http://localhost:8000'),
+    ],
 ];

@@ -24,10 +24,10 @@ class InvestigationResource extends JsonResource
             'result_summary' => $this->result_summary,
             'completed_at'   => $this->completed_at,
 
-            'context_info'   => '$this->context_info',
-            'target_persona' => '$this->target_persona',
-            'research_goal'  => '$this->research_goal',
-            'product_info'   => '$this->product_info',
+            'context_info'   => $this->context_info,
+            'target_persona' => $this->target_persona,
+            'research_goal'  => $this->research_goal,
+            'product_info'   => $this->product_info,
             
             'user' => UserResource::make($this->whenLoaded('user')),
             'syntheticUsers' => SyntheticUserResource::make($this->whenLoaded('syntheticUsers')),
