@@ -61,4 +61,8 @@ class User extends Authenticatable implements OAuthenticatable
         return $this->hasMany(Investigation::class);
     }
 
+    public function creditTransactions(): HasMany
+    {
+        return $this->hasMany(CreditTransaction::class);
+    }
 }

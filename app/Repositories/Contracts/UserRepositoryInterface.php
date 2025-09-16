@@ -28,4 +28,10 @@ interface UserRepositoryInterface
      * Usa transacción y borra archivos del Storage.
      */
     public function delete(User $user): void;
+
+    /**
+     * Deducción atómica: descuenta créditos sólo si hay saldo suficiente.
+     * @return bool true si afectó 1 fila; false si no había saldo suficiente.
+     */
+    public function deductCreditsAtomic(string $userId, int $credits): bool;
 }

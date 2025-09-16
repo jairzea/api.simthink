@@ -31,7 +31,7 @@ class AgentGatewayService
 
     public function run(string $tempId, string $investigationName): array
     {
-        $response = Http::timeout(220)->post("{$this->baseUrl}/run", [
+        $response = Http::timeout(999999999)->post("{$this->baseUrl}/run", [
             'temp_id' => $tempId,
             'investigation_name' => $investigationName,
         ]);

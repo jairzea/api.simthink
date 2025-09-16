@@ -32,6 +32,9 @@ class UserRepository implements UserRepositoryInterface
     public function create(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
+
+        // TODO: Elimnar producción
+        $data['credits'] = 40;
         return User::create($data);
     }
 
@@ -72,12 +75,25 @@ class UserRepository implements UserRepositoryInterface
         ])->save();
     }
 
-        public function queueExport(User $user): void
+    public function queueExport(User $user): void
     {
         // Aquí puedes despachar un Job que genere el ZIP y envíe un correo:
         // ExportUserDataJob::dispatch($user->id);
         // Por ahora, placeholder sincrónico opcional:
         // Storage::put("exports/{$user->id}/export.json", json_encode([...]));
+    }
+
+    public function deductCreditsAtomic(string $userId, int $credits): bool
+    {
+        $affected = DB::table('users')
+            ->where('id', $userId)
+            ->where('credits', '>=', $credits)
+            ->update([
+                'credits' => DB::raw("credits - {$credits}"),
+                'updated_at' => now(),
+            ]);
+
+        return $affected === 1;
     }
 
     public function delete(User $user): void

@@ -36,6 +36,7 @@ class CreditTransaction extends Model
     {
         return [
             'amount_usd' => 'decimal:2',
+            'credits_added' => 'integer',
             'metadata' => 'array',
         ];
     }

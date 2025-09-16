@@ -60,7 +60,7 @@ class InvestigationService
             'product_info'      => $investigation->product_info,
             'persona'           => $investigation->target_persona,
             'sample_size'       => $investigation->sample_size,
-            'user_id'           => 123,//$investigation->user_id,
+            'user_id'           => 123,//TODO: $investigation->user_id,
             'investigation_id'  => $investigation->id,
             'use_rag'           => $investigation->use_rag,
             'rag_ids'           => [], // podrías rellenarlo luego

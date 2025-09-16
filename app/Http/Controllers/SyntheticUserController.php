@@ -25,7 +25,7 @@ class SyntheticUserController extends Controller
 
     public function show(Request $request, SyntheticUser $syntheticUser): SyntheticUserResource
     {
-        return new SyntheticUserResource($synthetic_user);
+        return new SyntheticUserResource($syntheticUser);
     }
 
     public function update(SyntheticUserUpdateRequest $request, SyntheticUser $syntheticUser): SyntheticUserResource

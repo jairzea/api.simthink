@@ -4,13 +4,15 @@
 namespace App\Services;
 
 use App\Repositories\UserRepository;
+use App\Services\Credits\CreditDeductionService;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class UserService
 {
     public function __construct(
-        private readonly UserRepository $users
+        private readonly UserRepository $users,
+        private readonly CreditDeductionService $creditDeduction
     ) {}
 
     public function listUsers()
@@ -68,5 +70,15 @@ class UserService
         $this->users->queueExport(Auth::user());
     }
 
+    public function deductMyCredits(int $credits, array $meta = []): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $this->creditDeduction->deduct($user, $credits, $meta);
+    }
 
+    public function deductUserCredits(User $user, int $credits, array $meta = []): void
+    {
+        $this->creditDeduction->deduct($user, $credits, $meta);
+    }
 }
