@@ -14,8 +14,6 @@ use App\Services\UserService;
 use Illuminate\Support\Facades\Auth;
 use Log;
 
-ini_set('max_execution_time', 2040000000);
-
 class InvestigationController extends Controller
 {
     public function __construct(
@@ -33,12 +31,12 @@ class InvestigationController extends Controller
     {
         $investigation = $this->service->store($request->validated());
         // sleep(seconds: 15);
-        return new PrepareStudyResponseResource($investigation);
+        return $investigation;
     }
 
-    public function show(Investigation $investigation)
+    public function show(string $id)
     {
-        $investigation->load(['user', 'syntheticUsers', 'ragUpload']);
+        $investigation = $this->service->findById($id);
         return new InvestigationResource($investigation);
     }
 
@@ -66,10 +64,12 @@ class InvestigationController extends Controller
         $data = [
             'name' => $request->input('name'),
             'temp_id' => $request->input('temp_id'),
-            'status' => InvestigationStatus::Confirmed,
+            'status' => InvestigationStatus::Confirmed->value,
         ];
 
         $result = $this->service->confirm($investigation, $data);
+
+        return $result;
 
         // TODO: Lanzar simulación (puede ser un Job o llamada directa)
         // $this->simulationService->dispatch($investigation);

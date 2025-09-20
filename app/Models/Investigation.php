@@ -32,6 +32,8 @@ class Investigation extends Model
         'target_persona',
         'research_goal',
         'product_info',
+        'temp_id',
+        'error_message'
     ];
 
     /**

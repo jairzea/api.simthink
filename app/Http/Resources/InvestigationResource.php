@@ -28,6 +28,10 @@ class InvestigationResource extends JsonResource
             'target_persona' => $this->target_persona,
             'research_goal'  => $this->research_goal,
             'product_info'   => $this->product_info,
+
+            'temp_id'   => $this->temp_id,
+            'error_message'   => $this->error_message,
+
             
             'user' => UserResource::make($this->whenLoaded('user')),
             'syntheticUsers' => SyntheticUserResource::make($this->whenLoaded('syntheticUsers')),

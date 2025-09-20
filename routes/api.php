@@ -36,6 +36,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('investigations')->group(function () {
             Route::post('/', [InvestigationController::class, 'store']);
             Route::get('/', [InvestigationController::class, 'index']);
+            Route::get('/{id}', [InvestigationController::class, 'show']);
             Route::post('/{id}/confirm', [InvestigationController::class, 'confirm']);
         });
 

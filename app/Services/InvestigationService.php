@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Enums\InvestigationStatus;
+use App\Jobs\PrepareJob;
+use App\Jobs\RunJob;
 use App\Models\Investigation;
 use App\Repositories\InvestigationRepository;
-use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Log;
 
@@ -14,7 +16,7 @@ class InvestigationService
 
     public function __construct(
         protected InvestigationRepository $repository,
-        protected AgentGatewayService $gatewayService
+        protected AgentGatewayService $gatewayService,
     ) {}
 
     public function all()
@@ -32,43 +34,13 @@ class InvestigationService
         return $this->repository->findByUser( $perPage);
     }
 
-    public function store(array $data): array
+    public function store(array $data): JsonResponse
     {
-        $investigation = Investigation::create([
-            'id'              => Str::uuid(),
-            'user_id'         => Auth::id(),
-            'name'            => $data['name'],
-            'type'            => $data['type'],
-            'sample_size'     => $data['sample_size'],
-            'use_rag'         => $data['use_rag'] ?? false,
-            'cost_credits'    => $data['cost_credits'],
-            'status'          => $data['status'],
-            'context_info'    => $data['context_info'],
-            'target_persona'  => $data['target_persona'],
-            'research_goal'   => $data['research_goal'],
-            'product_info'    => $data['product_info'],
-        ]);
+        $inv = $this->repository->create($data);
 
-        $this->update($investigation, [
-            'status' => InvestigationStatus::PendingConfirmation,
-        ]);
+        PrepareJob::dispatch($inv->id)->onQueue('investigations');
 
-        // Llamar al prepare de FastAPI justo después de guardar
-        $response = $this->gatewayService->prepare([
-            'organization_info' => $investigation->context_info,
-            'research_goal'     => $investigation->research_goal,
-            'product_info'      => $investigation->product_info,
-            'persona'           => $investigation->target_persona,
-            'sample_size'       => $investigation->sample_size,
-            'user_id'           => 123,//TODO: $investigation->user_id,
-            'investigation_id'  => $investigation->id,
-            'use_rag'           => $investigation->use_rag,
-            'rag_ids'           => [], // podrías rellenarlo luego
-        ]);
-
-        Log::info("Response:", $response);
-
-        return ["investigation_id" => $investigation->id, ...$response];
+        return response()->json(['investigation_id'=>$inv->id,'status'=>$inv->status], 202);
     }
 
     public function update(Investigation $investigation, array $data): Investigation
@@ -78,17 +50,24 @@ class InvestigationService
         return $investigation;
     }
 
-    public function confirm(Investigation $investigation, array $data): array
+    public function confirm(Investigation $investigation, array $data): JsonResponse
     {
-        $investigation->update($data);
 
-        $result = $this->gatewayService->run(
-            $data['temp_id'],
-            $investigation->name
-        );
+        if ($investigation->status !== InvestigationStatus::PendingConfirmation->value) {
+            return response()->json(['message'=>'Invalid status'], 409);
+        }
 
-    
-        return $result;
+        $claimed = $this->repository->claimForRun($investigation, $data);
+        
+        if (! $claimed) return response()->json(['message'=>'Already claimed'], 409);
+        
+        $user = Auth::user();
+        RunJob::dispatch($investigation->id, $user)->onQueue('investigations');
+        
+        return response()->json([
+            'investigation_id' => $investigation->id, 
+            'status' => InvestigationStatus::Processing->value
+        ], 202);
     }
 
     public function delete(Investigation $investigation): void
